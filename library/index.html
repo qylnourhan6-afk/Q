@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="مكتبة إلكترونية تعليمية: كتب لجميع الصفوف والمواد، قارئ PDF، ومسابقات تعليمية.">
+  <meta name="theme-color" content="#0a1c3f">
+  <title>الرئيسية</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+<body>
+<main>
+  <section class="welcome"><div class="container">
+    <h1 id="heroTitle">أهلاً بك في مكتبة مدرستنا 📚</h1>
+    <p id="heroSub">عالم من المعرفة والثقافة والقراءة بين يديك</p>
+    <div class="gold-bar"></div>
+  </div></section>
+
+  <div class="container">
+    <div class="svc-grid">
+      <a class="svc" href="library.html"><div class="svc-ico" aria-hidden="true">📚</div><h3>الكتب</h3></a>
+      <a class="svc" href="competitions.html"><div class="svc-ico" aria-hidden="true">🏆</div><h3>مسابقات المكتبة</h3></a>
+      <a class="svc" href="contact.html?type=complaint"><div class="svc-ico" aria-hidden="true">💬</div><h3>م اللي مش عاجبك ف المدرسه</h3></a>
+      <a class="svc" href="contact.html?type=book_request"><div class="svc-ico" aria-hidden="true">✍️</div><h3>اطلب كتابك اللي ناقص</h3></a>
+    </div>
+  </div>
+
+  <div class="container" style="margin-top:36px">
+    <form class="search-card" id="searchForm" role="search" aria-label="بحث متقدم">
+      <div class="search-row">
+        <div class="field"><label for="sQ">ابحث باسم الكتاب أو المادة أو المدرس</label>
+          <div class="input-icon"><span id="sIcon"></span><input class="input" id="sQ" type="search" placeholder="مثال: الرياضيات، أ. أحمد..." maxlength="80"></div></div>
+        <div class="field"><label for="sGrade">الصف</label><select class="select" id="sGrade"><option value="">كل الصفوف</option></select></div>
+        <div class="field"><label for="sSubject">المادة</label><select class="select" id="sSubject"><option value="">كل المواد</option></select></div>
+        <div class="field"><label for="sTerm">الفصل</label><select class="select" id="sTerm"><option value="">كل الفصول</option></select></div>
+        <button class="btn btn-gold" type="submit">بحث</button>
+      </div>
+    </form>
+  </div>
+
+  <section class="section"><div class="container">
+    <div class="stats" id="stats"></div>
+  </div></section>
+
+  <section class="section" id="featuredSec" hidden><div class="container">
+    <div class="section-head"><h2>الكتب المميزة</h2><a class="more" href="library.html?featured=1">عرض الكل</a></div>
+    <div class="books-grid" id="featured"></div>
+  </div></section>
+
+  <section class="section"><div class="container">
+    <div class="section-head"><h2>أحدث الكتب المضافة</h2><a class="more" href="library.html?sort=newest">عرض الكل</a></div>
+    <div class="books-grid" id="latest"></div>
+  </div></section>
+
+  <section class="section"><div class="container">
+    <div class="section-head"><h2>الأكثر مشاهدة</h2><a class="more" href="library.html?sort=views">عرض الكل</a></div>
+    <div class="books-grid" id="popular"></div>
+  </div></section>
+
+  <section class="section" id="catsSec" hidden><div class="container">
+    <div class="section-head"><h2>الأقسام التعليمية</h2></div>
+    <div class="cat-grid" id="cats"></div>
+  </div></section>
+
+  <section class="section"><div class="container">
+    <div class="section-head"><h2>المسابقات المتاحة</h2><a class="more" href="competitions.html">كل المسابقات</a></div>
+    <div class="comp-grid" id="comps"></div>
+  </div></section>
+</main>
+<script type="module" src="assets/js/home.js"></script>
+</body>
+</html>

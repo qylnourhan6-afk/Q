@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a1c3f">
+  <title>استعادة كلمة المرور</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+<body data-page="forgot">
+<main class="auth-wrap">
+  <div class="auth-card">
+    <h1>استعادة كلمة المرور</h1>
+    <p class="sub">أدخل بريد الاسترداد الذي ربطته بحسابك من صفحة «حسابي ← الأمان».</p>
+    <form class="form" id="form" novalidate>
+      <div class="form-msg" id="msg" role="alert"></div>
+      <div class="field"><label for="email">بريد الاسترداد</label>
+        <input class="input" id="email" type="email" autocomplete="email" dir="ltr" maxlength="120" required>
+        <div class="field-err" data-for="email"></div></div>
+      <button class="btn btn-gold btn-block btn-lg" id="submit" type="submit">إرسال رابط الاستعادة</button>
+    </form>
+    <p class="muted" style="margin-top:16px;font-size:.92rem">لم تربط بريدًا بحسابك؟ لا يمكن استعادة كلمة المرور تلقائيًا، <a class="link" href="contact.html?type=contact">تواصل مع الإدارة</a> لمساعدتك.</p>
+    <div class="center-links"><a class="link" href="login.html">العودة لتسجيل الدخول</a></div>
+  </div>
+</main>
+<script type="module" src="assets/js/auth.js"></script>
+</body>
+</html>

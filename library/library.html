@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="تصفح كتب المكتبة حسب الصف والمادة والفصل الدراسي.">
+  <meta name="theme-color" content="#0a1c3f">
+  <title>المكتبة</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+<body>
+<div class="page-head"><div class="container"><h1>المكتبة</h1><p>ابحث وفلتر وابدأ القراءة فورًا.</p></div></div>
+<main class="page"><div class="container lib-layout">
+  <aside class="filters card" aria-label="تصفية النتائج">
+    <div class="field"><label for="fQ">بحث (كتاب / مادة / مدرس)</label><input class="input" id="fQ" type="search" maxlength="80" placeholder="اكتب للبحث..."></div>
+    <div class="field"><label for="fGrade">الصف الدراسي</label><select class="select" id="fGrade"><option value="">الكل</option></select></div>
+    <div class="field"><label for="fSubject">المادة</label><select class="select" id="fSubject"><option value="">الكل</option></select></div>
+    <div class="field"><label for="fTerm">الفصل الدراسي</label><select class="select" id="fTerm"><option value="">الكل</option></select></div>
+    <div class="field"><label for="fSort">الترتيب</label>
+      <select class="select" id="fSort"><option value="newest">الأحدث</option><option value="views">الأكثر مشاهدة</option><option value="title">أبجديًا</option></select></div>
+    <label style="display:flex;gap:8px;align-items:center;font-weight:700"><input type="checkbox" id="fFeatured"> الكتب المميزة فقط</label>
+    <label style="display:flex;gap:8px;align-items:center;font-weight:700"><input type="checkbox" id="fFav"> مفضلتي فقط</label>
+    <button class="btn btn-outline" id="reset" type="button">إعادة ضبط</button>
+  </aside>
+  <section>
+    <div class="toolbar"><strong id="count" aria-live="polite"></strong></div>
+    <div class="books-grid" id="grid"></div>
+    <div class="pager"><button class="btn btn-navy" id="more" type="button" hidden>عرض المزيد</button></div>
+  </section>
+</div></main>
+<script type="module" src="assets/js/library.js"></script>
+</body>
+</html>

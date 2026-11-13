@@ -1,0 +1,126 @@
+rules_version = '2';
+// ============================================================
+//  Cloud Firestore Security Rules
+//  الأدمن = من له مستند في admins/{uid} (يُنشأ يدويًا من Firebase Console فقط؛ لا يمكن كتابته من الموقع)
+// ============================================================
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isAdmin() { return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
+    function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
+    function onlyChanges(keys) { return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys); }
+
+    // ---------- المدراء ----------
+    match /admins/{uid} {
+      allow read: if isOwner(uid);          // لمعرفة هل المستخدم مدير (لإظهار الرابط فقط)
+      allow write: if false;                // لا كتابة من العميل أبدًا
+    }
+
+    // ---------- ربط اسم المستخدم (يمنع تكرار الاسم بعد ربط بريد استرداد) ----------
+    match /usernames/{name} {
+      allow get: if true;                   // للتحقق من توفر الاسم؛ لا يوجد list
+      allow list: if false;
+      allow create: if signedIn()
+        && name.matches('^[a-z0-9][a-z0-9_.]{2,19}$')
+        && request.resource.data.keys().hasOnly(['uid'])
+        && request.resource.data.uid == request.auth.uid;
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
+
+    // ---------- المستخدمون ----------
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['username', 'displayName', 'grade', 'createdAt'])
+        && request.resource.data.username is string && request.resource.data.username.matches('^[a-z0-9][a-z0-9_.]{2,19}$')
+        && request.resource.data.displayName is string && request.resource.data.displayName.size() >= 2 && request.resource.data.displayName.size() <= 40
+        && request.resource.data.grade is string && request.resource.data.grade.size() <= 60
+        && request.resource.data.createdAt == request.time;
+      // المستخدم يعدّل الاسم والصف فقط (لا يستطيع تعديل disabled أو username)
+      allow update: if (isOwner(uid) && onlyChanges(['displayName', 'grade'])
+          && request.resource.data.displayName is string && request.resource.data.displayName.size() >= 2 && request.resource.data.displayName.size() <= 40
+          && request.resource.data.grade is string && request.resource.data.grade.size() <= 60)
+        || isAdmin();
+      allow delete: if isAdmin();
+
+      match /favorites/{bookId} {
+        allow read, delete: if isOwner(uid);
+        allow create: if isOwner(uid) && request.resource.data.keys().hasOnly(['bookId', 'createdAt']) && request.resource.data.bookId == bookId;
+        allow update: if false;
+      }
+      match /history/{bookId} {
+        allow read, delete: if isOwner(uid);
+        allow create, update: if isOwner(uid)
+          && request.resource.data.keys().hasOnly(['bookId', 'title', 'coverUrl', 'lastPage', 'totalPages', 'updatedAt'])
+          && request.resource.data.title.size() <= 200 && request.resource.data.lastPage is int && request.resource.data.totalPages is int;
+      }
+      match /attempts/{compId} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow create: if isOwner(uid)
+          && request.resource.data.keys().hasOnly(['competitionId', 'title', 'score', 'total', 'timeTaken', 'createdAt'])
+          && request.resource.data.score is int && request.resource.data.total is int
+          && request.resource.data.score >= 0 && request.resource.data.score <= request.resource.data.total;
+        allow update: if false;               // محاولة واحدة فقط
+        allow delete: if isAdmin();
+      }
+    }
+
+    // ---------- الكتب ----------
+    match /books/{id} {
+      allow read: if true;
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin()
+        || (onlyChanges(['views'])     && request.resource.data.views == resource.data.views + 1)
+        || (onlyChanges(['downloads']) && request.resource.data.downloads == resource.data.downloads + 1);
+    }
+
+    // ---------- الأقسام والتنبيهات ----------
+    match /categories/{id}    { allow read: if true; allow write: if isAdmin(); }
+    match /announcements/{id} { allow read: if true; allow write: if isAdmin(); }
+
+    // ---------- الإعدادات ومحتوى الصفحة الرئيسية ----------
+    match /settings/{docId} { allow read: if true; allow write: if isAdmin(); }
+    // عدّادات عامة (زيارات / مستخدمون): زيادة واحدة فقط لكل عملية
+    match /settings/stats {
+      allow create: if (request.resource.data.keys().hasOnly(['visits']) && request.resource.data.visits == 1)
+                    || (request.resource.data.keys().hasOnly(['users'])  && request.resource.data.users == 1);
+      allow update: if (onlyChanges(['visits']) && request.resource.data.visits == resource.data.get('visits', 0) + 1)
+                    || (onlyChanges(['users'])  && request.resource.data.users  == resource.data.get('users', 0) + 1);
+    }
+
+    // ---------- المسابقات ----------
+    match /competitions/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+      match /results/{uid} {
+        allow read: if signedIn();
+        allow create: if isOwner(uid)
+          && get(/databases/$(database)/documents/competitions/$(id)).data.active == true
+          && request.resource.data.keys().hasOnly(['uid', 'name', 'score', 'total', 'timeTaken', 'createdAt'])
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.name is string && request.resource.data.name.size() <= 40
+          && request.resource.data.score is int && request.resource.data.total is int
+          && request.resource.data.score >= 0 && request.resource.data.score <= request.resource.data.total
+          && request.resource.data.createdAt == request.time;
+        allow update: if false;
+        allow delete: if isAdmin();
+      }
+    }
+
+    // ---------- الطلبات والشكاوى والاقتراحات والبلاغات ----------
+    match /requests/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['type', 'status', 'name', 'contactInfo', 'subject', 'bookExtra', 'bookId', 'message', 'uid', 'createdAt'])
+        && request.resource.data.type in ['book_request', 'broken_book', 'complaint', 'suggestion', 'contact']
+        && request.resource.data.status == 'new'
+        && request.resource.data.name is string && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 60
+        && request.resource.data.message is string && request.resource.data.message.size() >= 5 && request.resource.data.message.size() <= 2000
+        && request.resource.data.subject.size() <= 150 && request.resource.data.contactInfo.size() <= 100
+        && request.resource.data.bookExtra.size() <= 150 && request.resource.data.bookId.size() <= 60
+        && (request.resource.data.uid == '' || (signedIn() && request.resource.data.uid == request.auth.uid))
+        && request.resource.data.createdAt == request.time;
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}

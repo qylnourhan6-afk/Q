@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#06122b">
+  <title>قارئ الكتب</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+<body class="reader-body">
+<div class="reader-top" id="bar">
+  <a class="rbtn" id="back" href="library.html" aria-label="رجوع" title="رجوع"></a>
+  <div class="title" id="title">جارٍ التحميل...</div>
+  <button class="rbtn" id="prev" type="button" aria-label="الصفحة السابقة" title="السابقة" disabled></button>
+  <input class="page-input" id="pageIn" type="number" min="1" value="1" aria-label="رقم الصفحة">
+  <span id="total" style="color:#cfd8ea">/ —</span>
+  <button class="rbtn" id="next" type="button" aria-label="الصفحة التالية" title="التالية" disabled></button>
+  <button class="rbtn" id="zOut" type="button" aria-label="تصغير" title="تصغير"></button>
+  <span id="zoomLbl" style="color:#cfd8ea;min-width:44px;text-align:center">100%</span>
+  <button class="rbtn" id="zIn" type="button" aria-label="تكبير" title="تكبير"></button>
+  <form class="reader-search" id="sForm" role="search"><input id="sIn" type="search" placeholder="بحث في الكتاب" maxlength="60" aria-label="بحث داخل الكتاب"><span id="sRes" style="color:#cfd8ea;font-size:.85rem"></span><button class="rbtn" id="sNext" type="button" title="النتيجة التالية" aria-label="النتيجة التالية"></button></form>
+  <button class="rbtn" id="full" type="button" aria-label="ملء الشاشة" title="ملء الشاشة"></button>
+</div>
+<div class="reader-stage" id="stage"><div class="reader-msg"><p id="msg">جارٍ تحميل الكتاب...</p><div class="progress"><i id="prog"></i></div></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script type="module" src="assets/js/reader.js"></script>
+</body>
+</html>
